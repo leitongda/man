@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     # 创建枚举类型
     model_provider_enum = sa.Enum(
-        'openai', 'openai_compatible', 'anthropic', 
+        'openai', 'openai_compatible', 'anthropic', 'zhipu',
         'stable_diffusion', 'comfyui', 'midjourney',
         name='model_provider'
     )
