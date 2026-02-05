@@ -6,6 +6,14 @@ from app.schemas.story import StoryOutlineResponse
 from app.schemas.chapter import ChapterResponse
 from app.schemas.storyboard import StoryboardResponse, PanelUpdate
 from app.schemas.asset import AssetResponse
+from app.schemas.ai_model import (
+    AIModelCreate,
+    AIModelUpdate,
+    AIModelResponse,
+    AIModelListResponse,
+    AIModelTestResult,
+    DefaultModelsResponse,
+)
 
 __all__ = [
     "ProjectCreate",
@@ -19,4 +27,10 @@ __all__ = [
     "StoryboardResponse",
     "PanelUpdate",
     "AssetResponse",
+    "AIModelCreate",
+    "AIModelUpdate",
+    "AIModelResponse",
+    "AIModelListResponse",
+    "AIModelTestResult",
+    "DefaultModelsResponse",
 ]
