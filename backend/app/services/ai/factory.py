@@ -117,6 +117,18 @@ class AIAdapterFactory:
                 timeout=model.timeout,
                 extra_headers=model.extra_headers,
             )
+        elif model.provider == ModelProvider.zhipu:
+            # 智谱AI使用OpenAI兼容API
+            from app.services.ai.openai_adapter import OpenAIAdapter
+            return OpenAIAdapter(
+                api_key=api_key,
+                base_url=model.base_url or "https://open.bigmodel.cn/api/paas/v4",
+                model_name=model.model_name,
+                default_max_tokens=model.default_max_tokens,
+                default_temperature=model.default_temperature,
+                timeout=model.timeout,
+                extra_headers=model.extra_headers,
+            )
         elif model.provider == ModelProvider.anthropic:
             from app.services.ai.claude_adapter import ClaudeAdapter
             return ClaudeAdapter(

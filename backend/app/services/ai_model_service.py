@@ -168,6 +168,8 @@ class AIModelService:
 
             if model.provider in [ModelProvider.openai, ModelProvider.openai_compatible]:
                 await AIModelService._test_openai(model, api_key)
+            elif model.provider == ModelProvider.zhipu:
+                await AIModelService._test_zhipu(model, api_key)
             elif model.provider == ModelProvider.anthropic:
                 await AIModelService._test_anthropic(model, api_key)
             elif model.provider == ModelProvider.stable_diffusion:
@@ -208,6 +210,25 @@ class AIModelService:
 
         # 尝试获取模型列表来测试连接
         await client.models.list()
+
+    @staticmethod
+    async def _test_zhipu(model: AIModel, api_key: str):
+        """测试智谱AI连接"""
+        from openai import AsyncOpenAI
+
+        base_url = model.base_url or "https://open.bigmodel.cn/api/paas/v4"
+        client = AsyncOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            timeout=min(model.timeout, 30),
+        )
+
+        # 发送一个简单的消息来测试
+        await client.chat.completions.create(
+            model=model.model_name,
+            max_tokens=10,
+            messages=[{"role": "user", "content": "Hi"}],
+        )
 
     @staticmethod
     async def _test_anthropic(model: AIModel, api_key: str):

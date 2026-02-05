@@ -46,7 +46,7 @@ class AIModelCreate(BaseModel):
     @model_validator(mode='after')
     def validate_provider_fields(self):
         """根据供应商类型验证必需字段"""
-        if self.provider in [ModelProvider.openai, ModelProvider.anthropic]:
+        if self.provider in [ModelProvider.openai, ModelProvider.anthropic, ModelProvider.zhipu]:
             if not self.api_key:
                 raise ValueError(f"{self.provider.value} 需要提供 api_key")
         if self.provider == ModelProvider.openai_compatible:

@@ -13,6 +13,7 @@ class ModelProvider(str, Enum):
     openai = "openai"                       # OpenAI 官方
     openai_compatible = "openai_compatible" # OpenAI 兼容(Azure/Ollama/vLLM等)
     anthropic = "anthropic"                 # Anthropic Claude
+    zhipu = "zhipu"                         # 智谱AI (GLM)
     stable_diffusion = "stable_diffusion"   # SD WebUI
     comfyui = "comfyui"                     # ComfyUI
     midjourney = "midjourney"               # Midjourney
