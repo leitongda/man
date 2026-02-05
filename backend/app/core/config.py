@@ -20,12 +20,15 @@ class Settings(BaseSettings):
     # CORS配置
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
     
-    # AI服务配置
+    # AI服务配置 (保留用于向后兼容，新配置应使用模型管理)
     OPENAI_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
     SD_API_URL: str = "http://localhost:7860"
     COMFYUI_API_URL: str = "http://localhost:8188"
     MIDJOURNEY_API_KEY: str = ""
+    
+    # 加密配置
+    ENCRYPTION_KEY: str = ""  # Fernet 加密密钥，用于加密存储 API 密钥
     
     # 文件存储配置
     DATA_DIR: str = "./data"
