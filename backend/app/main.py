@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import projects, story_bible, stories, chapters, storyboard, assets, generation, export
+from app.api import projects, story_bible, stories, chapters, storyboard, assets, generation, export, ai_models
 from app.core.config import settings
 
 
@@ -44,6 +44,7 @@ app.include_router(storyboard.router, prefix="/api/projects", tags=["storyboard"
 app.include_router(assets.router, prefix="/api/projects", tags=["assets"])
 app.include_router(generation.router, prefix="/api/projects", tags=["generation"])
 app.include_router(export.router, prefix="/api/projects", tags=["export"])
+app.include_router(ai_models.router, prefix="/api/ai-models", tags=["ai-models"])
 
 
 @app.get("/")
