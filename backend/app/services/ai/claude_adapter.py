@@ -10,20 +10,43 @@ from app.services.ai.base import BaseAIAdapter
 class ClaudeAdapter(BaseAIAdapter):
     """Claude服务适配器"""
 
-    def __init__(self):
-        self.client = AsyncAnthropic(api_key=settings.ANTHROPIC_API_KEY)
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        model_name: str = "claude-3-opus-20240229",
+        default_max_tokens: Optional[int] = None,
+        timeout: int = 300,
+    ):
+        """初始化 Claude 适配器
+        
+        Args:
+            api_key: API 密钥，不提供则使用环境变量
+            base_url: API 基础 URL
+            model_name: 模型名称
+            default_max_tokens: 默认最大 token 数
+            timeout: 请求超时时间（秒）
+        """
+        self.model_name = model_name
+        self.default_max_tokens = default_max_tokens or 4096
+        
+        self.client = AsyncAnthropic(
+            api_key=api_key or settings.ANTHROPIC_API_KEY,
+            base_url=base_url,
+            timeout=timeout,
+        )
 
     async def generate_text(
         self,
         prompt: str,
         system_prompt: Optional[str] = None,
-        max_tokens: int = 4096,
+        max_tokens: Optional[int] = None,
         temperature: float = 0.7,
     ) -> str:
         """使用Claude生成文本"""
         response = await self.client.messages.create(
-            model="claude-3-opus-20240229",
-            max_tokens=max_tokens,
+            model=self.model_name,
+            max_tokens=max_tokens or self.default_max_tokens,
             system=system_prompt or "",
             messages=[{"role": "user", "content": prompt}],
         )
@@ -59,8 +82,8 @@ class ClaudeAdapter(BaseAIAdapter):
         content_type = response.headers.get("content-type", "image/jpeg")
 
         response = await self.client.messages.create(
-            model="claude-3-opus-20240229",
-            max_tokens=1024,
+            model=self.model_name,
+            max_tokens=self.default_max_tokens,
             messages=[
                 {
                     "role": "user",

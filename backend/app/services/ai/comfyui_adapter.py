@@ -12,8 +12,22 @@ from app.services.ai.base import BaseImageAdapter
 class ComfyUIAdapter(BaseImageAdapter):
     """ComfyUI API适配器"""
 
-    def __init__(self):
-        self.base_url = settings.COMFYUI_API_URL
+    def __init__(
+        self,
+        base_url: Optional[str] = None,
+        workflow_template: Optional[str] = None,
+        timeout: int = 300,
+    ):
+        """初始化 ComfyUI 适配器
+        
+        Args:
+            base_url: API 基础 URL
+            workflow_template: 默认工作流模板 ID
+            timeout: 请求超时时间（秒）
+        """
+        self.base_url = base_url or settings.COMFYUI_API_URL
+        self.workflow_template = workflow_template
+        self.timeout = timeout
         self.client_id = str(uuid.uuid4())
 
     async def _queue_prompt(self, workflow: Dict[str, Any]) -> str:

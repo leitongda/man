@@ -10,10 +10,22 @@ from app.services.ai.base import BaseImageAdapter
 class MidjourneyAdapter(BaseImageAdapter):
     """Midjourney API适配器（通过第三方API）"""
 
-    def __init__(self):
-        self.api_key = settings.MIDJOURNEY_API_KEY
-        # 这里使用假设的第三方Midjourney API
-        self.base_url = "https://api.midjourney.com"
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        timeout: int = 300,
+    ):
+        """初始化 Midjourney 适配器
+        
+        Args:
+            api_key: API 密钥
+            base_url: API 基础 URL（第三方代理）
+            timeout: 请求超时时间（秒）
+        """
+        self.api_key = api_key or settings.MIDJOURNEY_API_KEY
+        self.base_url = base_url or "https://api.midjourney.com"
+        self.timeout = timeout
 
     async def txt2img(
         self,
