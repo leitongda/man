@@ -9,6 +9,7 @@ export type ModelProvider =
   | 'openai' 
   | 'openai_compatible' 
   | 'anthropic' 
+  | 'zhipu'
   | 'stable_diffusion' 
   | 'comfyui' 
   | 'midjourney'
@@ -225,6 +226,7 @@ export const providerLabels: Record<ModelProvider, string> = {
   openai: 'OpenAI',
   openai_compatible: 'OpenAI 兼容 (Azure/Ollama/vLLM)',
   anthropic: 'Anthropic Claude',
+  zhipu: '智谱AI (GLM)',
   stable_diffusion: 'Stable Diffusion WebUI',
   comfyui: 'ComfyUI',
   midjourney: 'Midjourney',
@@ -252,6 +254,8 @@ export const getFieldsByProvider = (provider: ModelProvider): string[] => {
       return [...common, 'api_key', 'base_url', 'api_version', 'deployment_name', 'extra_headers']
     case 'anthropic':
       return [...common, 'api_key', 'base_url', 'api_version']
+    case 'zhipu':
+      return [...common, 'api_key', 'base_url']
     case 'stable_diffusion':
       return [...common, 'base_url', 'checkpoint_name', 'default_sampler', 
               'default_steps', 'default_cfg_scale', 'default_width', 'default_height']
@@ -273,6 +277,7 @@ export const getSupportedTypesByProvider = (provider: ModelProvider): ModelType[
       return ['text_generation', 'image_generation', 'image_analysis']
     case 'openai_compatible':
     case 'anthropic':
+    case 'zhipu':
       return ['text_generation', 'image_analysis']
     case 'stable_diffusion':
     case 'comfyui':
