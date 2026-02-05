@@ -8,6 +8,7 @@ import StoryBiblePage from './pages/StoryBible'
 import StoryboardPage from './pages/Storyboard'
 import AssetsPage from './pages/Assets'
 import WorkflowPage from './pages/Workflow'
+import SettingsPage from './pages/Settings'
 import AIModelsPage from './pages/Settings/AIModels'
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path="project/:id/storyboard" element={<StoryboardPage />} />
             <Route path="project/:id/assets" element={<AssetsPage />} />
             <Route path="project/:id/workflow" element={<WorkflowPage />} />
+            <Route path="settings" element={<SettingsPage />} />
             <Route path="settings/ai-models" element={<AIModelsPage />} />
           </Route>
         </Routes>
