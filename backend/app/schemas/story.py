@@ -13,10 +13,32 @@ class Beat(BaseModel):
     characters_involved: List[str] = []
 
 
+class Storyline(BaseModel):
+    """故事线"""
+    id: str
+    name: str
+    description: str
+    beats: List[str] = []  # beat ids
+
+
 class StoryOutlineResponse(BaseModel):
     """故事大纲响应"""
+    id: str
+    project_id: str
     synopsis_short: str = ""
     synopsis_mid: str = ""
     synopsis_long: Optional[str] = None
     key_beats: List[Beat] = []
-    outline: List[Beat] = []
+    storylines: List[Storyline] = []
+
+    class Config:
+        from_attributes = True
+
+
+class StoryOutlineUpdate(BaseModel):
+    """故事大纲更新"""
+    synopsis_short: Optional[str] = None
+    synopsis_mid: Optional[str] = None
+    synopsis_long: Optional[str] = None
+    key_beats: Optional[List[Beat]] = None
+    storylines: Optional[List[Storyline]] = None
