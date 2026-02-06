@@ -10,10 +10,28 @@ export const api = axios.create({
   },
 })
 
-// 请求拦截器
+// Token 管理
+const TOKEN_KEY = 'man-auth-token'
+
+export function getToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY)
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token)
+}
+
+export function removeToken(): void {
+  localStorage.removeItem(TOKEN_KEY)
+}
+
+// 请求拦截器 - 自动添加 Token
 api.interceptors.request.use(
   (config) => {
-    // 可以在这里添加token等
+    const token = getToken()
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => {
@@ -27,6 +45,15 @@ api.interceptors.response.use(
     return response.data
   },
   (error) => {
+    // 401 未认证 - 清除令牌并跳转到登录页
+    if (error.response?.status === 401) {
+      removeToken()
+      localStorage.removeItem('man-auth')
+      // 避免在登录页面重复跳转
+      if (!window.location.pathname.startsWith('/login') && !window.location.pathname.startsWith('/register')) {
+        window.location.href = '/login'
+      }
+    }
     // 统一错误处理
     console.error('API Error:', error.response?.data || error.message)
     return Promise.reject(error)
@@ -49,11 +76,13 @@ export const storyBibleApi = {
   update: (projectId: string, data: any) => api.patch(`/projects/${projectId}/story-bible`, data),
 }
 
-// 故事扩写API
+// 故事大纲API
 export const storyApi = {
   getOutline: (projectId: string) => api.get(`/projects/${projectId}/story/outline`),
-  generateOutline: (projectId: string, length: string) => 
-    api.post(`/projects/${projectId}/story/generate`, { length }),
+  updateOutline: (projectId: string, data: any) =>
+    api.patch(`/projects/${projectId}/story/outline`, data),
+  generate: (projectId: string) =>
+    api.post(`/projects/${projectId}/story/generate`),
 }
 
 // 章节API
@@ -61,6 +90,12 @@ export const chapterApi = {
   list: (projectId: string) => api.get(`/projects/${projectId}/chapters`),
   get: (projectId: string, chapterId: string) => 
     api.get(`/projects/${projectId}/chapters/${chapterId}`),
+  create: (projectId: string, data: any) =>
+    api.post(`/projects/${projectId}/chapters`, data),
+  update: (projectId: string, chapterId: string, data: any) =>
+    api.patch(`/projects/${projectId}/chapters/${chapterId}`, data),
+  delete: (projectId: string, chapterId: string) =>
+    api.delete(`/projects/${projectId}/chapters/${chapterId}`),
   generate: (projectId: string) => api.post(`/projects/${projectId}/chapters/generate`),
 }
 
@@ -68,6 +103,8 @@ export const chapterApi = {
 export const storyboardApi = {
   get: (projectId: string, chapterId: string) => 
     api.get(`/projects/${projectId}/chapters/${chapterId}/storyboard`),
+  listPanels: (projectId: string) =>
+    api.get(`/projects/${projectId}/panels`),
   generate: (projectId: string, chapterId: string) => 
     api.post(`/projects/${projectId}/chapters/${chapterId}/storyboard/generate`),
   updatePanel: (projectId: string, panelId: string, data: any) =>
