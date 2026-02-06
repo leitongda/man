@@ -1,15 +1,17 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { projectApi } from '@/services/api'
 import type { Project, ProjectConfig } from '@/types/project'
 
 interface ProjectState {
   projects: Project[]
   currentProject: Project | null
+  loading: boolean
   
   // Actions
+  fetchProjects: () => Promise<void>
   createProject: (name: string, description: string, config: Partial<ProjectConfig>) => Promise<Project>
-  updateProject: (id: string, updates: Partial<Project>) => void
-  deleteProject: (id: string) => void
+  updateProject: (id: string, updates: Partial<Project>) => Promise<void>
+  deleteProject: (id: string) => Promise<void>
   setCurrentProject: (project: Project | null) => void
   getProject: (id: string) => Project | undefined
 }
@@ -25,54 +27,64 @@ const defaultConfig: ProjectConfig = {
 }
 
 export const useProjectStore = create<ProjectState>()(
-  persist(
-    (set, get) => ({
-      projects: [],
-      currentProject: null,
+  (set, get) => ({
+    projects: [],
+    currentProject: null,
+    loading: false,
 
-      createProject: async (name, description, config) => {
-        const newProject: Project = {
-          id: crypto.randomUUID(),
-          name,
-          description,
-          config: { ...defaultConfig, ...config },
-          status: 'draft',
-          current_step: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-        
-        set((state) => ({
-          projects: [...state.projects, newProject],
-        }))
-        
-        return newProject
-      },
+    fetchProjects: async () => {
+      set({ loading: true })
+      try {
+        const projects = await projectApi.list() as any as Project[]
+        set({ projects, loading: false })
+      } catch (error) {
+        console.error('Failed to fetch projects:', error)
+        set({ loading: false })
+      }
+    },
 
-      updateProject: (id, updates) => {
-        set((state) => ({
-          projects: state.projects.map((p) =>
-            p.id === id ? { ...p, ...updates, updated_at: new Date().toISOString() } : p
-          ),
-        }))
-      },
+    createProject: async (name, description, config) => {
+      const data = {
+        name,
+        description,
+        config: { ...defaultConfig, ...config },
+      }
+      
+      const newProject = await projectApi.create(data) as any as Project
+      
+      set((state) => ({
+        projects: [newProject, ...state.projects],
+      }))
+      
+      return newProject
+    },
 
-      deleteProject: (id) => {
-        set((state) => ({
-          projects: state.projects.filter((p) => p.id !== id),
-        }))
-      },
+    updateProject: async (id, updates) => {
+      const updatedProject = await projectApi.update(id, updates) as any as Project
+      
+      set((state) => ({
+        projects: state.projects.map((p) =>
+          p.id === id ? updatedProject : p
+        ),
+        currentProject: state.currentProject?.id === id ? updatedProject : state.currentProject,
+      }))
+    },
 
-      setCurrentProject: (project) => {
-        set({ currentProject: project })
-      },
+    deleteProject: async (id) => {
+      await projectApi.delete(id)
+      
+      set((state) => ({
+        projects: state.projects.filter((p) => p.id !== id),
+        currentProject: state.currentProject?.id === id ? null : state.currentProject,
+      }))
+    },
 
-      getProject: (id) => {
-        return get().projects.find((p) => p.id === id)
-      },
-    }),
-    {
-      name: 'man-projects',
-    }
-  )
+    setCurrentProject: (project) => {
+      set({ currentProject: project })
+    },
+
+    getProject: (id) => {
+      return get().projects.find((p) => p.id === id)
+    },
+  })
 )

@@ -10,6 +10,13 @@ import {
   IconSettings,
   IconRobot,
   IconFile,
+  IconUserGroup,
+  IconBrush,
+  IconEdit,
+  IconList,
+  IconCamera,
+  IconCommon,
+  IconStorage,
 } from '@arco-design/web-react/icon'
 import type { ReactNode } from 'react'
 
@@ -20,26 +27,55 @@ export interface IRoute {
   icon?: ReactNode
   breadcrumb?: boolean
   children?: IRoute[]
-  // 不在菜单中显示，但可以通过路由访问
   ignore?: boolean
-  // 是否需要项目 ID 参数
   requireProjectId?: boolean
 }
 
 // 首页菜单（未进入项目时）
 export const homeRoutes: IRoute[] = [
   {
-    name: '首页',
+    name: '项目列表',
     key: 'home',
     path: '/',
     icon: IconHome,
   },
   {
-    name: '项目列表',
-    key: 'projects',
-    path: '/projects',
-    icon: IconFile,
-    ignore: true, // 首页已包含项目列表
+    name: '预设库',
+    key: 'presets',
+    path: '/presets',
+    icon: IconStorage,
+    children: [
+      {
+        name: '角色预设',
+        key: 'presets-characters',
+        path: '/presets/characters',
+        icon: IconUserGroup,
+      },
+      {
+        name: '世界观预设',
+        key: 'presets-worlds',
+        path: '/presets/worlds',
+        icon: IconCommon,
+      },
+      {
+        name: '风格预设',
+        key: 'presets-styles',
+        path: '/presets/styles',
+        icon: IconBrush,
+      },
+      {
+        name: '场景预设',
+        key: 'presets-scenes',
+        path: '/presets/scenes',
+        icon: IconImage,
+      },
+      {
+        name: '分镜预设',
+        key: 'presets-storyboards',
+        path: '/presets/storyboards',
+        icon: IconCamera,
+      },
+    ],
   },
 ]
 
@@ -52,28 +88,40 @@ export const projectRoutes: IRoute[] = [
     icon: IconHome,
   },
   {
+    name: '大纲/故事线',
+    key: 'outline',
+    path: '/project/:id/outline',
+    icon: IconEdit,
+  },
+  {
+    name: '章节管理',
+    key: 'chapters',
+    path: '/project/:id/chapters',
+    icon: IconList,
+  },
+  {
     name: '世界观',
     key: 'story-bible',
     path: '/project/:id/story-bible',
     icon: IconBook,
   },
   {
-    name: '分镜',
+    name: '分镜描述',
     key: 'storyboard',
     path: '/project/:id/storyboard',
-    icon: IconImage,
+    icon: IconFile,
+  },
+  {
+    name: '分镜出图',
+    key: 'panel-images',
+    path: '/project/:id/panel-images',
+    icon: IconCamera,
   },
   {
     name: '资产',
     key: 'assets',
     path: '/project/:id/assets',
     icon: IconFolder,
-  },
-  {
-    name: '工作流',
-    key: 'workflow',
-    path: '/project/:id/workflow',
-    icon: IconApps,
   },
 ]
 
@@ -90,6 +138,12 @@ export const settingsRoutes: IRoute[] = [
         key: 'ai-models',
         path: '/settings/ai-models',
         icon: IconRobot,
+      },
+      {
+        name: '用户管理',
+        key: 'users',
+        path: '/settings/users',
+        icon: IconUserGroup,
       },
     ],
   },
@@ -112,7 +166,7 @@ export function getRouteByPath(path: string, routes: IRoute[]): IRoute | undefin
 // 根据路径获取面包屑
 export function getBreadcrumb(path: string, routes: IRoute[]): string[] {
   const breadcrumb: string[] = []
-  
+
   function find(routes: IRoute[], parents: string[] = []): boolean {
     for (const route of routes) {
       const currentPath = [...parents, route.name]
@@ -126,7 +180,7 @@ export function getBreadcrumb(path: string, routes: IRoute[]): string[] {
     }
     return false
   }
-  
+
   find(routes)
   return breadcrumb
 }
