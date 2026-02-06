@@ -64,9 +64,10 @@ export default function AIModelsPage() {
     setLoading(true)
     try {
       const response = await aiModelApi.list()
-      setModels(response.items)
+      setModels(response?.items || [])
     } catch (error) {
       Message.error('加载模型列表失败')
+      setModels([])
     } finally {
       setLoading(false)
     }
@@ -171,7 +172,7 @@ export default function AIModelsPage() {
   }
 
   // 按类型分组模型
-  const groupedModels = models.reduce((acc, model) => {
+  const groupedModels = (models || []).reduce((acc, model) => {
     const type = model.model_type
     if (!acc[type]) acc[type] = []
     acc[type].push(model)
@@ -283,7 +284,7 @@ export default function AIModelsPage() {
   const supportedTypes = getSupportedTypesByProvider(selectedProvider)
 
   return (
-    <div style={{ padding: 24 }}>
+    <div>
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <Title heading={4} style={{ margin: 0 }}>
