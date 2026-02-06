@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     COMFYUI_API_URL: str = "http://localhost:8188"
     MIDJOURNEY_API_KEY: str = ""
     
+    # JWT 认证配置
+    SECRET_KEY: str = "man-secret-key-change-in-production"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7天
+    
     # 加密配置
     ENCRYPTION_KEY: str = ""  # Fernet 加密密钥，用于加密存储 API 密钥
     
