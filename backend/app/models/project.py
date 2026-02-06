@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, Text, JSON, DateTime, Integer, Enum
+from sqlalchemy import Column, String, Text, JSON, DateTime, Integer, Enum, ForeignKey
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -21,10 +21,13 @@ class Project(Base):
         default="draft"
     )
     current_step = Column(Integer, default=0)
+    owner_id = Column(String(36), ForeignKey("users.id"), nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # 关系
+    owner = relationship("User", back_populates="projects")
+    story_outline = relationship("StoryOutline", back_populates="project", uselist=False)
     story_bible = relationship("StoryBible", back_populates="project", uselist=False)
-    chapters = relationship("Chapter", back_populates="project")
+    chapters = relationship("Chapter", back_populates="project", order_by="Chapter.order")
     assets = relationship("Asset", back_populates="project")

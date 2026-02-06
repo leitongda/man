@@ -5,7 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import projects, story_bible, stories, chapters, storyboard, assets, generation, export, ai_models
+from app.api import auth, users, projects, presets, story_bible, stories, chapters, storyboard, assets, generation, export, ai_models
 from app.core.config import settings
 
 
@@ -35,8 +35,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 注册路由
+# 注册路由 - 认证和用户管理
+app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
+app.include_router(users.router, prefix="/api/users", tags=["users"])
+
+# 注册路由 - 业务功能
 app.include_router(projects.router, prefix="/api/projects", tags=["projects"])
+app.include_router(presets.router, prefix="/api/presets", tags=["presets"])
 app.include_router(story_bible.router, prefix="/api/projects", tags=["story-bible"])
 app.include_router(stories.router, prefix="/api/projects", tags=["stories"])
 app.include_router(chapters.router, prefix="/api/projects", tags=["chapters"])
