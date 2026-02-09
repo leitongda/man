@@ -4,7 +4,6 @@
 
 import { useState, useEffect } from 'react'
 import {
-  Card,
   Button,
   Typography,
   Space,
@@ -43,10 +42,13 @@ import {
   getFieldsByProvider,
   getSupportedTypesByProvider,
 } from '@/services/aiModel'
+import { EmptyCenter } from '@/components/styled/common'
+import { PageHeaderRow, HeaderTitle } from './AIModels.styles'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 const FormItem = Form.Item
 const CollapseItem = Collapse.Item
+
 
 export default function AIModelsPage() {
   const [loading, setLoading] = useState(true)
@@ -285,11 +287,11 @@ export default function AIModelsPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <PageHeaderRow>
         <div>
-          <Title heading={4} style={{ margin: 0 }}>
+          <HeaderTitle heading={4}>
             AI 模型管理
-          </Title>
+          </HeaderTitle>
           <Text type="secondary">
             配置和管理 AI 模型，包括文本生成、图像生成和图像分析模型
           </Text>
@@ -297,7 +299,7 @@ export default function AIModelsPage() {
         <Button type="primary" icon={<IconPlus />} onClick={() => openModal()}>
           添加模型
         </Button>
-      </div>
+      </PageHeaderRow>
 
       <Spin loading={loading} style={{ width: '100%' }}>
         <Collapse defaultActiveKey={['text_generation', 'image_generation', 'image_analysis']}>
@@ -321,9 +323,9 @@ export default function AIModelsPage() {
                   border={false}
                 />
               ) : (
-                <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--color-text-3)' }}>
+                <EmptyCenter>
                   暂未配置 {modelTypeLabels[type]} 模型
-                </div>
+                </EmptyCenter>
               )}
             </CollapseItem>
           ))}

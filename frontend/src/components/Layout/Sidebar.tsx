@@ -5,7 +5,7 @@ import { Menu } from '@arco-design/web-react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { homeRoutes, projectRoutes, settingsRoutes, IRoute } from '@/routes'
 import { useGlobalContext } from '@/context'
-import styles from './layout.module.css'
+import { MenuWrapper, StyledMenuIcon } from './Sidebar.styles'
 
 interface SidebarProps {
   projectId?: string
@@ -16,11 +16,9 @@ export default function Sidebar({ projectId }: SidebarProps) {
   const location = useLocation()
   const { collapsed } = useGlobalContext()
 
-  // 根据当前路径判断使用哪组菜单
   const isInProject = location.pathname.startsWith('/project/')
   const isInSettings = location.pathname.startsWith('/settings')
 
-  // 选择对应的路由配置
   let routes: IRoute[]
   if (isInProject && projectId) {
     routes = projectRoutes
@@ -30,7 +28,6 @@ export default function Sidebar({ projectId }: SidebarProps) {
     routes = homeRoutes
   }
 
-  // 处理路径中的动态参数
   const getActualPath = (path: string | undefined) => {
     if (!path) return ''
     if (projectId) {
@@ -39,7 +36,6 @@ export default function Sidebar({ projectId }: SidebarProps) {
     return path
   }
 
-  // 获取当前选中的菜单项
   const getSelectedKeys = () => {
     const currentPath = location.pathname
     for (const route of routes) {
@@ -59,7 +55,6 @@ export default function Sidebar({ projectId }: SidebarProps) {
     return []
   }
 
-  // 获取默认展开的子菜单
   const getOpenKeys = () => {
     const keys: string[] = []
     for (const route of routes) {
@@ -75,13 +70,14 @@ export default function Sidebar({ projectId }: SidebarProps) {
     return keys
   }
 
-  // 渲染菜单项
   const renderMenuItems = (routes: IRoute[]) => {
     return routes
       .filter((route) => !route.ignore)
       .map((route) => {
-        const IconComponent = route.icon as React.ComponentType<any>
-        const icon = IconComponent ? <IconComponent className={styles.menuIcon} /> : null
+        const IconComponent = route.icon as unknown as React.ComponentType<any>
+        const icon = IconComponent ? (
+          <StyledMenuIcon><IconComponent /></StyledMenuIcon>
+        ) : null
 
         if (route.children && route.children.length > 0) {
           return (
@@ -108,9 +104,7 @@ export default function Sidebar({ projectId }: SidebarProps) {
       })
   }
 
-  // 处理菜单点击
   const handleMenuClick = (key: string) => {
-    // 查找对应的路由
     const findRoute = (routes: IRoute[]): IRoute | undefined => {
       for (const route of routes) {
         if (route.key === key) return route
@@ -130,7 +124,7 @@ export default function Sidebar({ projectId }: SidebarProps) {
   }
 
   return (
-    <div className={styles.menuWrapper}>
+    <MenuWrapper>
       <Menu
         collapse={collapsed}
         selectedKeys={getSelectedKeys()}
@@ -140,6 +134,6 @@ export default function Sidebar({ projectId }: SidebarProps) {
       >
         {renderMenuItems(routes)}
       </Menu>
-    </div>
+    </MenuWrapper>
   )
 }

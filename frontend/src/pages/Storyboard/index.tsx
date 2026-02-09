@@ -13,14 +13,19 @@ import {
   Collapse,
   Tag,
   Descriptions,
-  Divider,
   Select,
 } from '@arco-design/web-react'
-import { IconRobot, IconRefresh, IconImport } from '@arco-design/web-react/icon'
+import { IconRobot, IconRefresh } from '@arco-design/web-react/icon'
 import { useParams } from 'react-router-dom'
 import { chapterApi, storyboardApi } from '@/services/api'
+import { PageHeader, LoadingCenter, EmptyCenter } from '@/components/styled/common'
+import {
+  ChapterSelector, SceneParagraph, PanelCard,
+  DialogueSection, DialogueDivider, DialogueTitle,
+  DialogueLine, DialogueText,
+} from './styles'
 
-const { Title, Paragraph } = Typography
+const { Title } = Typography
 const CollapseItem = Collapse.Item
 
 const cameraLabels: Record<string, string> = {
@@ -31,6 +36,7 @@ const cameraLabels: Record<string, string> = {
   bird_eye: '鸟瞰',
   worm_eye: '仰视',
 }
+
 
 export default function StoryboardPage() {
   const { id: projectId } = useParams()
@@ -92,19 +98,19 @@ export default function StoryboardPage() {
   }
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size={32} /></div>
+    return <LoadingCenter><Spin size={32} /></LoadingCenter>
   }
 
   const scenes = storyboard?.scenes || []
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={4}>分镜描述</Title>
         <Space>
           <Button icon={<IconRobot />} onClick={handleGenerate}>AI 生成分镜</Button>
         </Space>
-      </div>
+      </PageHeader>
 
       {chapters.length === 0 ? (
         <Card>
@@ -113,7 +119,7 @@ export default function StoryboardPage() {
       ) : (
         <>
           {/* 章节选择器 */}
-          <Card style={{ marginBottom: 16 }}>
+          <ChapterSelector>
             <Space>
               <span>选择章节：</span>
               <Select
@@ -131,11 +137,11 @@ export default function StoryboardPage() {
                 刷新
               </Button>
             </Space>
-          </Card>
+          </ChapterSelector>
 
           {/* 分镜内容 */}
           {sbLoading ? (
-            <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
+            <EmptyCenter><Spin /></EmptyCenter>
           ) : scenes.length > 0 ? (
             <Collapse defaultActiveKey={scenes.map((_: any, i: number) => String(i))}>
               {scenes.map((scene: any, sceneIdx: number) => (
@@ -150,16 +156,15 @@ export default function StoryboardPage() {
                     </Space>
                   }
                 >
-                  <Paragraph type="secondary" style={{ marginBottom: 12 }}>
+                  <SceneParagraph type="secondary">
                     {scene.purpose}
-                  </Paragraph>
+                  </SceneParagraph>
 
                   {scene.panels?.length > 0 ? (
-                    scene.panels.map((panel: any, panelIdx: number) => (
-                      <Card
+                    scene.panels.map((panel: any) => (
+                      <PanelCard
                         key={panel.id}
                         size="small"
-                        style={{ marginBottom: 8 }}
                         title={
                           <Space>
                             <Tag>Panel #{panel.order}</Tag>
@@ -182,18 +187,18 @@ export default function StoryboardPage() {
                           ]}
                         />
                         {panel.dialogue?.length > 0 && (
-                          <div style={{ marginTop: 8 }}>
-                            <Divider style={{ margin: '8px 0' }} />
-                            <Title heading={6} style={{ fontSize: 13 }}>对话</Title>
+                          <DialogueSection>
+                            <DialogueDivider />
+                            <DialogueTitle heading={6}>对话</DialogueTitle>
                             {panel.dialogue.map((d: any, di: number) => (
-                              <div key={di} style={{ marginBottom: 4 }}>
+                              <DialogueLine key={di}>
                                 <Tag size="small">{d.type}</Tag>
-                                <span style={{ marginLeft: 4 }}>{d.text}</span>
-                              </div>
+                                <DialogueText>{d.text}</DialogueText>
+                              </DialogueLine>
                             ))}
-                          </div>
+                          </DialogueSection>
                         )}
-                      </Card>
+                      </PanelCard>
                     ))
                   ) : (
                     <Empty description="此场景暂无分镜" />

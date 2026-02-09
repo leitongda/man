@@ -1,32 +1,37 @@
 /**
  * Arco Pro 风格布局组件
  */
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Outlet, useLocation, useParams } from 'react-router-dom'
-import { Layout, Spin, Breadcrumb } from '@arco-design/web-react'
+import { Layout, Breadcrumb } from '@arco-design/web-react'
 import NavBar from './NavBar'
 import Sidebar from './Sidebar'
 import { useGlobalContext } from '@/context'
 import { homeRoutes, projectRoutes, settingsRoutes, getBreadcrumb } from '@/routes'
-import styles from './layout.module.css'
-
-const { Sider, Content } = Layout
+import {
+  RootLayout,
+  NavbarWrapper,
+  StyledSider,
+  ContentLayout,
+  ContentWrapper,
+  BreadcrumbWrapper,
+  StyledContent,
+  StyledSpin,
+  Footer,
+} from './index.styles'
 
 export default function PageLayout() {
   const location = useLocation()
   const { id: projectId } = useParams()
   const { settings, collapsed } = useGlobalContext()
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
 
-  // 根据当前路径判断使用哪组路由
   const isInProject = location.pathname.startsWith('/project/')
   const isInSettings = location.pathname.startsWith('/settings')
 
-  // 获取当前路由对应的面包屑
   const routes = isInProject ? projectRoutes : isInSettings ? settingsRoutes : homeRoutes
   const breadcrumb = getBreadcrumb(location.pathname, routes)
 
-  // 计算布局样式
   const navbarHeight = 60
   const menuWidth = collapsed ? 48 : settings.menuWidth
 
@@ -34,67 +39,59 @@ export default function PageLayout() {
   const showMenu = settings.menu
   const showFooter = settings.footer
 
-  const paddingLeft = showMenu ? { paddingLeft: menuWidth } : {}
-  const paddingTop = showNavbar ? { paddingTop: navbarHeight } : {}
-  const paddingStyle = { ...paddingLeft, ...paddingTop }
-
   return (
-    <Layout className={styles.layout}>
-      {/* 导航栏 */}
+    <RootLayout>
       {showNavbar && (
-        <div className={styles.navbar}>
+        <NavbarWrapper>
           <NavBar />
-        </div>
+        </NavbarWrapper>
       )}
 
       {loading ? (
-        <Spin className={styles.spin} />
+        <StyledSpin />
       ) : (
         <Layout>
-          {/* 侧边栏 */}
           {showMenu && (
-            <Sider
-              className={styles.sider}
+            <StyledSider
               width={menuWidth}
               collapsed={collapsed}
               collapsible
               trigger={null}
               breakpoint="xl"
-              style={paddingTop}
+              style={showNavbar ? { paddingTop: navbarHeight } : undefined}
             >
               <Sidebar projectId={projectId} />
-            </Sider>
+            </StyledSider>
           )}
 
-          {/* 内容区 */}
-          <Layout className={styles.contentLayout} style={paddingStyle}>
-            <div className={styles.contentWrapper}>
-              {/* 面包屑 */}
+          <ContentLayout
+            $paddingLeft={showMenu ? menuWidth : undefined}
+            $paddingTop={showNavbar ? navbarHeight : undefined}
+          >
+            <ContentWrapper>
               {breadcrumb.length > 0 && (
-                <div className={styles.breadcrumb}>
+                <BreadcrumbWrapper>
                   <Breadcrumb>
                     {breadcrumb.map((item, index) => (
                       <Breadcrumb.Item key={index}>{item}</Breadcrumb.Item>
                     ))}
                   </Breadcrumb>
-                </div>
+                </BreadcrumbWrapper>
               )}
 
-              {/* 页面内容 */}
-              <Content className={styles.content}>
+              <StyledContent>
                 <Outlet />
-              </Content>
-            </div>
+              </StyledContent>
+            </ContentWrapper>
 
-            {/* 页脚 */}
             {showFooter && (
-              <div className={styles.footer}>
+              <Footer>
                 MAN - AI 漫画生成系统 © 2024
-              </div>
+              </Footer>
             )}
-          </Layout>
+          </ContentLayout>
         </Layout>
       )}
-    </Layout>
+    </RootLayout>
   )
 }

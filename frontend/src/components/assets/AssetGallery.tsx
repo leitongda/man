@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   Card,
   Grid,
-  Image,
   Button,
   Space,
   Tag,
@@ -20,6 +19,8 @@ import {
   IconDownload,
   IconEye,
 } from '@arco-design/web-react/icon'
+import { SecondaryText } from '@/components/styled/common'
+import { FilterCard, FilterBar, CoverWrapper, CoverImage, FileName, PreviewImage } from './AssetGallery.styles'
 
 const { Row, Col } = Grid
 
@@ -53,6 +54,7 @@ const typeColors: Record<string, string> = {
   panel: 'orange',
   page: 'purple',
 }
+
 
 export default function AssetGallery({
   assets,
@@ -99,8 +101,8 @@ export default function AssetGallery({
 
   return (
     <div>
-      <Card style={{ marginBottom: 16 }}>
-        <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+      <FilterCard>
+        <FilterBar>
           <Space>
             <Input
               prefix={<IconSearch />}
@@ -143,8 +145,8 @@ export default function AssetGallery({
               </Button>
             </Upload>
           </Space>
-        </Space>
-      </Card>
+        </FilterBar>
+      </FilterCard>
 
       {filteredAssets.length === 0 ? (
         <Card>
@@ -157,25 +159,14 @@ export default function AssetGallery({
               <Card
                 hoverable
                 cover={
-                  <div
-                    style={{
-                      height: 180,
-                      overflow: 'hidden',
-                      background: 'var(--color-fill-2)',
-                    }}
-                  >
-                    <Image
+                  <CoverWrapper>
+                    <CoverImage
                       src={asset.thumbnail || asset.path}
                       alt={asset.filename}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                      }}
                       preview={false}
                       onClick={() => handlePreview(asset)}
                     />
-                  </div>
+                  </CoverWrapper>
                 }
                 actions={[
                   <Button
@@ -201,22 +192,18 @@ export default function AssetGallery({
               >
                 <Card.Meta
                   title={
-                    <div style={{ 
-                      overflow: 'hidden', 
-                      textOverflow: 'ellipsis', 
-                      whiteSpace: 'nowrap' 
-                    }}>
+                    <FileName>
                       {asset.filename}
-                    </div>
+                    </FileName>
                   }
                   description={
                     <Space>
                       <Tag color={typeColors[asset.type]} size="small">
                         {typeLabels[asset.type]}
                       </Tag>
-                      <span style={{ fontSize: 12, color: 'var(--color-text-3)' }}>
+                      <SecondaryText>
                         {new Date(asset.created_at).toLocaleDateString()}
-                      </span>
+                      </SecondaryText>
                     </Space>
                   }
                 />
@@ -233,10 +220,9 @@ export default function AssetGallery({
         style={{ width: 'auto', maxWidth: '90vw' }}
       >
         {previewAsset && (
-          <Image
+          <PreviewImage
             src={previewAsset.path}
             alt={previewAsset.filename}
-            style={{ maxHeight: '80vh' }}
           />
         )}
       </Modal>

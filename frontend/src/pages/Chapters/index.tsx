@@ -18,9 +18,10 @@ import {
   Popconfirm,
   Tag,
 } from '@arco-design/web-react'
-import { IconPlus, IconRobot, IconEdit, IconDelete, IconImport } from '@arco-design/web-react/icon'
+import { IconPlus, IconRobot, IconEdit, IconDelete } from '@arco-design/web-react/icon'
 import { useParams } from 'react-router-dom'
 import { chapterApi } from '@/services/api'
+import { PageHeader, LoadingCenter } from '@/components/styled/common'
 
 const { Title } = Typography
 const FormItem = Form.Item
@@ -156,12 +157,12 @@ export default function ChaptersPage() {
   ]
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size={32} /></div>
+    return <LoadingCenter><Spin size={32} /></LoadingCenter>
   }
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={4}>章节管理</Title>
         <Space>
           <Button icon={<IconRobot />} onClick={handleGenerate}>AI 生成章节</Button>
@@ -169,7 +170,7 @@ export default function ChaptersPage() {
             新建章节
           </Button>
         </Space>
-      </div>
+      </PageHeader>
 
       <Card>
         <Table

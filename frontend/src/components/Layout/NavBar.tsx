@@ -17,7 +17,19 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useGlobalContext } from '@/context'
 import { useAuthStore } from '@/stores/auth'
-import styles from './layout.module.css'
+import {
+  NavbarInner,
+  NavbarLeft,
+  NavbarRight,
+  Logo,
+  IconBtn,
+  MenuIcon,
+  UserInfoDisabled,
+  UserInfoName,
+  UserInfoEmail,
+  UserTrigger,
+  UserName,
+} from './NavBar.styles'
 
 export default function NavBar() {
   const navigate = useNavigate()
@@ -35,12 +47,12 @@ export default function NavBar() {
       }}
     >
       <Menu.Item key="ai-models">
-        <IconRobot style={{ marginRight: 8 }} />
+        <MenuIcon><IconRobot /></MenuIcon>
         AI 模型管理
       </Menu.Item>
       {user?.role === 'admin' && (
         <Menu.Item key="users">
-          <IconUserGroup style={{ marginRight: 8 }} />
+          <MenuIcon><IconUserGroup /></MenuIcon>
           用户管理
         </Menu.Item>
       )}
@@ -60,18 +72,18 @@ export default function NavBar() {
       }}
     >
       <Menu.Item key="info" disabled>
-        <div style={{ padding: '4px 0' }}>
-          <div style={{ fontWeight: 500 }}>{user?.nickname || user?.username}</div>
-          <div style={{ fontSize: 12, color: 'var(--color-text-3)' }}>{user?.email}</div>
-        </div>
+        <UserInfoDisabled>
+          <UserInfoName>{user?.nickname || user?.username}</UserInfoName>
+          <UserInfoEmail>{user?.email}</UserInfoEmail>
+        </UserInfoDisabled>
       </Menu.Item>
       <Menu.Item key="profile">
-        <IconUser style={{ marginRight: 8 }} />
+        <MenuIcon><IconUser /></MenuIcon>
         个人设置
       </Menu.Item>
       <Divider style={{ margin: '4px 0' }} />
       <Menu.Item key="logout">
-        <IconPoweroff style={{ marginRight: 8 }} />
+        <MenuIcon><IconPoweroff /></MenuIcon>
         退出登录
       </Menu.Item>
     </Menu>
@@ -81,59 +93,53 @@ export default function NavBar() {
     setSettings({ theme: settings.theme === 'light' ? 'dark' : 'light' })
   }
 
-  // 用户名首字母
   const avatarText = user?.nickname?.[0] || user?.username?.[0] || 'U'
 
   return (
-    <div className={styles.navbarInner}>
-      {/* 左侧 Logo 和折叠按钮 */}
-      <div className={styles.navbarLeft}>
-        <div className={styles.logo} onClick={() => navigate('/')}>
+    <NavbarInner>
+      <NavbarLeft>
+        <Logo onClick={() => navigate('/')}>
           <IconApps style={{ fontSize: 24, marginRight: 8 }} />
           <Typography.Title heading={5} style={{ margin: 0 }}>
             MAN
           </Typography.Title>
-        </div>
+        </Logo>
         
         <Tooltip content={collapsed ? '展开菜单' : '收起菜单'}>
-          <div className={styles.collapseBtn} onClick={() => setCollapsed(!collapsed)}>
+          <IconBtn onClick={() => setCollapsed(!collapsed)}>
             {collapsed ? <IconMenuUnfold /> : <IconMenuFold />}
-          </div>
+          </IconBtn>
         </Tooltip>
-      </div>
+      </NavbarLeft>
 
-      {/* 右侧操作区 */}
-      <div className={styles.navbarRight}>
-        {/* 主题切换 */}
+      <NavbarRight>
         <Tooltip content={settings.theme === 'light' ? '切换暗色模式' : '切换亮色模式'}>
-          <div className={styles.navbarBtn} onClick={toggleTheme}>
+          <IconBtn onClick={toggleTheme}>
             {settings.theme === 'light' ? <IconMoon /> : <IconSun />}
-          </div>
+          </IconBtn>
         </Tooltip>
 
         <Divider type="vertical" />
 
-        {/* 设置菜单 */}
         <Dropdown droplist={settingsMenu} position="br">
-          <div className={styles.navbarBtn}>
+          <IconBtn>
             <IconSettings style={{ fontSize: 18 }} />
-          </div>
+          </IconBtn>
         </Dropdown>
 
         <Divider type="vertical" />
 
-        {/* 用户头像和下拉菜单 */}
         <Dropdown droplist={userMenu} position="br">
-          <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }}>
+          <UserTrigger>
             <Avatar size={28} style={{ backgroundColor: '#165DFF' }}>
               {avatarText.toUpperCase()}
             </Avatar>
-            <span style={{ fontSize: 14, color: 'var(--color-text-1)' }}>
+            <UserName>
               {user?.nickname || user?.username}
-            </span>
-          </div>
+            </UserName>
+          </UserTrigger>
         </Dropdown>
-      </div>
-    </div>
+      </NavbarRight>
+    </NavbarInner>
   )
 }

@@ -11,14 +11,15 @@ import {
   Tag,
   Empty,
   Spin,
-  Image,
   Message,
 } from '@arco-design/web-react'
 import { IconRobot, IconRefresh } from '@arco-design/web-react/icon'
 import { useParams } from 'react-router-dom'
 import { storyboardApi, generationApi } from '@/services/api'
+import { PageHeader, LoadingCenter } from '@/components/styled/common'
+import { ChapterCard, ImagePlaceholder, PanelImage, PanelInfo, PanelAction } from './styles'
 
-const { Title, Paragraph } = Typography
+const { Title } = Typography
 const { Row, Col } = Grid
 
 const statusColors: Record<string, string> = {
@@ -36,6 +37,7 @@ const statusLabels: Record<string, string> = {
   approved: '已通过',
   rejected: '已拒绝',
 }
+
 
 export default function PanelImagesPage() {
   const { id: projectId } = useParams()
@@ -68,7 +70,7 @@ export default function PanelImagesPage() {
   }
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size={32} /></div>
+    return <LoadingCenter><Spin size={32} /></LoadingCenter>
   }
 
   // 按章节分组
@@ -81,7 +83,7 @@ export default function PanelImagesPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={4}>分镜出图</Title>
         <Space>
           <Button icon={<IconRefresh />} onClick={loadPanels}>刷新</Button>
@@ -89,7 +91,7 @@ export default function PanelImagesPage() {
             批量生成
           </Button>
         </Space>
-      </div>
+      </PageHeader>
 
       {panels.length === 0 ? (
         <Card>
@@ -97,10 +99,9 @@ export default function PanelImagesPage() {
         </Card>
       ) : (
         Object.entries(grouped).map(([chapterTitle, chapterPanels]) => (
-          <Card
+          <ChapterCard
             key={chapterTitle}
             title={chapterTitle}
-            style={{ marginBottom: 16 }}
             extra={
               <Button size="small" icon={<IconRobot />}>
                 生成本章全部
@@ -115,25 +116,12 @@ export default function PanelImagesPage() {
                     bodyStyle={{ padding: 12 }}
                   >
                     {/* 图片区域 */}
-                    <div
-                      style={{
-                        width: '100%',
-                        aspectRatio: '3/4',
-                        background: 'var(--color-fill-2)',
-                        borderRadius: 4,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginBottom: 8,
-                        overflow: 'hidden',
-                      }}
-                    >
+                    <ImagePlaceholder>
                       {panel.final_image || panel.rough_image ? (
-                        <Image
+                        <PanelImage
                           src={panel.final_image || panel.rough_image}
                           width="100%"
                           height="100%"
-                          style={{ objectFit: 'cover' }}
                         />
                       ) : (
                         <Button
@@ -144,29 +132,28 @@ export default function PanelImagesPage() {
                           生成图片
                         </Button>
                       )}
-                    </div>
+                    </ImagePlaceholder>
 
                     {/* 信息 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <PanelInfo>
                       <Tag size="small">#{panel.order}</Tag>
                       <Tag size="small" color={statusColors[panel.status]}>
                         {statusLabels[panel.status] || panel.status}
                       </Tag>
-                    </div>
+                    </PanelInfo>
                     {panel.action && (
-                      <Paragraph
+                      <PanelAction
                         type="secondary"
                         ellipsis={{ rows: 2 }}
-                        style={{ margin: '4px 0 0', fontSize: 12 }}
                       >
                         {panel.action}
-                      </Paragraph>
+                      </PanelAction>
                     )}
                   </Card>
                 </Col>
               ))}
             </Row>
-          </Card>
+          </ChapterCard>
         ))
       )}
     </div>

@@ -13,6 +13,8 @@ import ReactFlow, {
   Node,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
+import { PageHeaderLarge } from '@/components/styled/common'
+import { ToolbarRight, FlowContainer } from './styles'
 
 const { Title } = Typography
 
@@ -59,8 +61,9 @@ const initialEdges: Edge[] = [
   { id: 'e5-6', source: '5', target: '6' },
 ]
 
+
 export default function WorkflowPage() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
+  const [nodes, , onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
 
   const onConnect = useCallback(
@@ -70,20 +73,20 @@ export default function WorkflowPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+      <PageHeaderLarge>
         <Title heading={4}>工作流编辑器</Title>
-        <div>
-          <Button icon={<IconPlus />} style={{ marginRight: 8 }}>
+        <ToolbarRight>
+          <Button icon={<IconPlus />}>
             添加节点
           </Button>
           <Button type="primary" icon={<IconPlayArrow />}>
             运行工作流
           </Button>
-        </div>
-      </div>
+        </ToolbarRight>
+      </PageHeaderLarge>
 
       <Card bodyStyle={{ padding: 0 }}>
-        <div style={{ height: 600 }}>
+        <FlowContainer>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -96,7 +99,7 @@ export default function WorkflowPage() {
             <MiniMap />
             <Background gap={12} size={1} />
           </ReactFlow>
-        </div>
+        </FlowContainer>
       </Card>
     </div>
   )

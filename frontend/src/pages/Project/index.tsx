@@ -3,7 +3,7 @@
  */
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Card, Typography, Grid, Steps, Button, Space, Tag, Spin, Message } from '@arco-design/web-react'
+import { Typography, Grid, Steps, Tag, Spin } from '@arco-design/web-react'
 import {
   IconBook,
   IconEdit,
@@ -12,11 +12,16 @@ import {
   IconCheckCircle,
   IconList,
   IconCamera,
-  IconArrowRight,
 } from '@arco-design/web-react/icon'
 import { useProjectStore } from '@/stores/project'
+import { LoadingCenter } from '@/components/styled/common'
+import {
+  InfoCard, InfoHeader, TitleRow, ProjectTitle, TagRow,
+  PipelineCard, StepsWrapper, ModuleCard, ModuleInner,
+  ModuleIcon, ModuleContent, ModuleTitle, ModuleDesc, ArrowIcon,
+} from './styles'
 
-const { Title, Paragraph } = Typography
+const { Paragraph } = Typography
 const { Row, Col } = Grid
 const Step = Steps.Step
 
@@ -30,6 +35,7 @@ const styleMap: Record<string, string> = {
   manga: '日漫', manhua: '国漫', webtoon: '条漫',
   american: '美漫', realistic: '写实', watercolor: '水彩',
 }
+
 
 export default function ProjectPage() {
   const { id } = useParams()
@@ -47,11 +53,11 @@ export default function ProjectPage() {
   const project = projects.find((p) => p.id === id)
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size={32} /></div>
+    return <LoadingCenter><Spin size={32} /></LoadingCenter>
   }
 
   if (!project) {
-    return <div style={{ textAlign: 'center', padding: 60 }}>项目不存在或加载中...</div>
+    return <LoadingCenter>项目不存在或加载中...</LoadingCenter>
   }
 
   const pipelineSteps = [
@@ -105,54 +111,53 @@ export default function ProjectPage() {
   return (
     <div>
       {/* 项目信息 */}
-      <Card style={{ marginBottom: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <InfoCard>
+        <InfoHeader>
           <div>
-            <Space align="center" style={{ marginBottom: 8 }}>
-              <Title heading={4} style={{ margin: 0 }}>{project.name}</Title>
+            <TitleRow align="center">
+              <ProjectTitle heading={4}>{project.name}</ProjectTitle>
               <Tag color={statusMap[project.status]?.color}>
                 {statusMap[project.status]?.text}
               </Tag>
-            </Space>
+            </TitleRow>
             <Paragraph type="secondary">{project.description || '暂无描述'}</Paragraph>
-            <Space style={{ marginTop: 8 }}>
+            <TagRow>
               <Tag>{styleMap[project.config.style] || project.config.style}</Tag>
               <Tag>每章 {project.config.panels_per_chapter} 格</Tag>
               <Tag>{project.config.format === 'webtoon_vertical' ? '竖屏条漫' : project.config.format === 'a4_page' ? 'A4页漫' : '自定义'}</Tag>
-            </Space>
+            </TagRow>
           </div>
-        </div>
-      </Card>
+        </InfoHeader>
+      </InfoCard>
 
       {/* 生成流程 */}
-      <Card title="生成流程" style={{ marginBottom: 16 }}>
-        <Steps current={project.current_step || 0} style={{ marginBottom: 16 }}>
+      <PipelineCard title="生成流程">
+        <StepsWrapper current={project.current_step || 0}>
           {pipelineSteps.map((step, index) => (
             <Step key={index} title={step.title} description={step.description} />
           ))}
-        </Steps>
-      </Card>
+        </StepsWrapper>
+      </PipelineCard>
 
       {/* 模块入口卡片 */}
       <Row gutter={[16, 16]}>
         {modules.map((mod) => (
           <Col xs={24} sm={12} md={8} key={mod.path}>
-            <Card
+            <ModuleCard
               hoverable
-              style={{ cursor: 'pointer' }}
               onClick={() => navigate(mod.path)}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ color: 'var(--color-primary)' }}>{mod.icon}</div>
-                <div style={{ flex: 1 }}>
-                  <Title heading={6} style={{ margin: 0 }}>{mod.title}</Title>
-                  <Paragraph type="secondary" style={{ margin: '4px 0 0', fontSize: 13 }}>
+              <ModuleInner>
+                <ModuleIcon>{mod.icon}</ModuleIcon>
+                <ModuleContent>
+                  <ModuleTitle heading={6}>{mod.title}</ModuleTitle>
+                  <ModuleDesc type="secondary">
                     {mod.description}
-                  </Paragraph>
-                </div>
-                <IconArrowRight style={{ color: 'var(--color-text-3)' }} />
-              </div>
-            </Card>
+                  </ModuleDesc>
+                </ModuleContent>
+                <ArrowIcon />
+              </ModuleInner>
+            </ModuleCard>
           </Col>
         ))}
       </Row>

@@ -1,5 +1,6 @@
-import { Card, Typography, Tabs, Button, Empty, Upload } from '@arco-design/web-react'
-import { IconPlus, IconUpload } from '@arco-design/web-react/icon'
+import { Card, Typography, Tabs, Button, Empty } from '@arco-design/web-react'
+import { IconUpload } from '@arco-design/web-react/icon'
+import { PageHeaderLarge } from '@/components/styled/common'
 
 const { Title } = Typography
 const TabPane = Tabs.TabPane
@@ -7,12 +8,12 @@ const TabPane = Tabs.TabPane
 export default function AssetsPage() {
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+      <PageHeaderLarge>
         <Title heading={4}>资产管理</Title>
         <Button type="primary" icon={<IconUpload />}>
           上传资产
         </Button>
-      </div>
+      </PageHeaderLarge>
 
       <Tabs defaultActiveTab="characters">
         <TabPane key="characters" title="角色">

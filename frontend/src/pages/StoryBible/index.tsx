@@ -17,13 +17,15 @@ import {
   Tag,
   List,
 } from '@arco-design/web-react'
-import { IconPlus, IconRobot, IconImport, IconSave } from '@arco-design/web-react/icon'
+import { IconRobot, IconImport } from '@arco-design/web-react/icon'
 import { useParams } from 'react-router-dom'
 import { storyBibleApi } from '@/services/api'
 import { presetApi } from '@/services/preset'
+import { PageHeader, LoadingCenter, TabActionBar, EmptyCenter } from '@/components/styled/common'
+import { CharacterCard, CharacterHeader } from './styles'
 import type { Preset } from '@/types/preset'
 
-const { Title, Paragraph } = Typography
+const { Title } = Typography
 const TabPane = Tabs.TabPane
 
 export default function StoryBiblePage() {
@@ -32,7 +34,7 @@ export default function StoryBiblePage() {
   const [storyBible, setStoryBible] = useState<any>(null)
 
   // 预设导入弹窗
-  const [importType, setImportType] = useState<string>('')
+  const [, setImportType] = useState<string>('')
   const [importVisible, setImportVisible] = useState(false)
   const [importPresets, setImportPresets] = useState<Preset[]>([])
   const [importLoading, setImportLoading] = useState(false)
@@ -102,7 +104,7 @@ export default function StoryBiblePage() {
   }
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size={32} /></div>
+    return <LoadingCenter><Spin size={32} /></LoadingCenter>
   }
 
   const characters = storyBible?.characters || []
@@ -112,28 +114,28 @@ export default function StoryBiblePage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={4}>世界观 (Story Bible)</Title>
         <Space>
           <Button icon={<IconRobot />} onClick={handleGenerate}>AI 生成</Button>
         </Space>
-      </div>
+      </PageHeader>
 
       <Tabs defaultActiveTab="characters">
         {/* 角色设定 Tab */}
         <TabPane key="characters" title={`角色设定 (${characters.length})`}>
-          <div style={{ marginBottom: 12 }}>
+          <TabActionBar>
             <Space>
               <Button icon={<IconImport />} onClick={() => handleOpenImport('character')}>
                 从预设导入
               </Button>
             </Space>
-          </div>
+          </TabActionBar>
           {characters.length > 0 ? (
             <div>
               {characters.map((char: any) => (
-                <Card key={char.id} style={{ marginBottom: 12 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <CharacterCard key={char.id}>
+                  <CharacterHeader>
                     <Title heading={6}>{char.name}</Title>
                     <Button
                       size="small"
@@ -142,7 +144,7 @@ export default function StoryBiblePage() {
                     >
                       保存为预设
                     </Button>
-                  </div>
+                  </CharacterHeader>
                   <Descriptions
                     column={2}
                     data={[
@@ -152,7 +154,7 @@ export default function StoryBiblePage() {
                       { label: '外貌', value: JSON.stringify(char.appearance || {}) },
                     ]}
                   />
-                </Card>
+                </CharacterCard>
               ))}
             </div>
           ) : (
@@ -162,7 +164,7 @@ export default function StoryBiblePage() {
 
         {/* 世界观 Tab */}
         <TabPane key="world" title="世界观">
-          <div style={{ marginBottom: 12 }}>
+          <TabActionBar>
             <Space>
               <Button icon={<IconImport />} onClick={() => handleOpenImport('world')}>
                 从预设导入
@@ -176,7 +178,7 @@ export default function StoryBiblePage() {
                 </Button>
               )}
             </Space>
-          </div>
+          </TabActionBar>
           {Object.keys(world).length > 0 ? (
             <Card>
               <Descriptions
@@ -197,7 +199,7 @@ export default function StoryBiblePage() {
 
         {/* 风格指南 Tab */}
         <TabPane key="style" title="风格指南">
-          <div style={{ marginBottom: 12 }}>
+          <TabActionBar>
             <Space>
               <Button icon={<IconImport />} onClick={() => handleOpenImport('style')}>
                 从预设导入
@@ -211,7 +213,7 @@ export default function StoryBiblePage() {
                 </Button>
               )}
             </Space>
-          </div>
+          </TabActionBar>
           {Object.keys(styleGuide).length > 0 ? (
             <Card>
               <Descriptions
@@ -259,7 +261,7 @@ export default function StoryBiblePage() {
         style={{ width: 640 }}
       >
         {importLoading ? (
-          <div style={{ textAlign: 'center', padding: 40 }}><Spin /></div>
+          <EmptyCenter><Spin /></EmptyCenter>
         ) : importPresets.length > 0 ? (
           <Table
             columns={[

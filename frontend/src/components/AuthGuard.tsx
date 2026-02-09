@@ -6,6 +6,7 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { Spin } from '@arco-design/web-react'
 import { useAuthStore } from '@/stores/auth'
 import { getToken } from '@/services/api'
+import { FullScreenCenter, HalfScreenCenter } from '@/components/styled/common'
 
 interface AuthGuardProps {
   children: React.ReactNode
@@ -13,7 +14,7 @@ interface AuthGuardProps {
 
 export default function AuthGuard({ children }: AuthGuardProps) {
   const location = useLocation()
-  const { isLoggedIn, loading, fetchMe, user } = useAuthStore()
+  const { loading, fetchMe, user } = useAuthStore()
   const token = getToken()
 
   useEffect(() => {
@@ -31,14 +32,9 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   // 正在加载用户信息
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-      }}>
+      <FullScreenCenter>
         <Spin size={40} />
-      </div>
+      </FullScreenCenter>
     )
   }
 
@@ -57,16 +53,9 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (user && user.role !== 'admin') {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '60vh',
-        color: 'var(--color-text-3)',
-        fontSize: 16,
-      }}>
+      <HalfScreenCenter>
         权限不足，需要管理员权限
-      </div>
+      </HalfScreenCenter>
     )
   }
 

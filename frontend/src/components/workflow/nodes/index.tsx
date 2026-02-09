@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { Handle, Position, NodeProps } from 'reactflow'
-import { Card, Tag, Typography } from '@arco-design/web-react'
+import { Tag, Typography } from '@arco-design/web-react'
 import {
   IconEdit,
   IconImage,
@@ -9,129 +9,123 @@ import {
   IconSettings,
   IconPlayArrow,
 } from '@arco-design/web-react/icon'
+import { BaseNodeCard, NodeTitleRow } from './styles'
 
 const { Text } = Typography
-
-// 基础节点样式
-const baseNodeStyle = {
-  padding: '10px 15px',
-  borderRadius: '8px',
-  minWidth: 150,
-}
 
 // 输入节点
 export const InputNode = memo(({ data }: NodeProps) => {
   return (
-    <Card
+    <BaseNodeCard
       size="small"
-      style={{ ...baseNodeStyle, borderColor: '#165DFF' }}
+      $borderColor="#165DFF"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <NodeTitleRow>
           <IconEdit style={{ color: '#165DFF' }} />
           <Text>{data.label}</Text>
-        </div>
+        </NodeTitleRow>
       }
     >
       <Tag color="arcoblue">输入</Tag>
       <Handle type="source" position={Position.Bottom} />
-    </Card>
+    </BaseNodeCard>
   )
 })
 
 // AI处理节点
 export const AINode = memo(({ data }: NodeProps) => {
   return (
-    <Card
+    <BaseNodeCard
       size="small"
-      style={{ ...baseNodeStyle, borderColor: '#722ED1' }}
+      $borderColor="#722ED1"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <NodeTitleRow>
           <IconPlayArrow style={{ color: '#722ED1' }} />
           <Text>{data.label}</Text>
-        </div>
+        </NodeTitleRow>
       }
     >
       <Tag color="purple">{data.model || 'GPT-4'}</Tag>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
-    </Card>
+    </BaseNodeCard>
   )
 })
 
 // 图像生成节点
 export const ImageGenNode = memo(({ data }: NodeProps) => {
   return (
-    <Card
+    <BaseNodeCard
       size="small"
-      style={{ ...baseNodeStyle, borderColor: '#F77234' }}
+      $borderColor="#F77234"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <NodeTitleRow>
           <IconImage style={{ color: '#F77234' }} />
           <Text>{data.label}</Text>
-        </div>
+        </NodeTitleRow>
       }
     >
       <Tag color="orange">{data.model || 'SD'}</Tag>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
-    </Card>
+    </BaseNodeCard>
   )
 })
 
 // 角色引用节点
 export const CharacterRefNode = memo(({ data }: NodeProps) => {
   return (
-    <Card
+    <BaseNodeCard
       size="small"
-      style={{ ...baseNodeStyle, borderColor: '#00B42A' }}
+      $borderColor="#00B42A"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <NodeTitleRow>
           <IconUser style={{ color: '#00B42A' }} />
           <Text>{data.label}</Text>
-        </div>
+        </NodeTitleRow>
       }
     >
       {data.characterName && <Tag color="green">{data.characterName}</Tag>}
       <Handle type="source" position={Position.Bottom} />
-    </Card>
+    </BaseNodeCard>
   )
 })
 
 // 输出节点
 export const OutputNode = memo(({ data }: NodeProps) => {
   return (
-    <Card
+    <BaseNodeCard
       size="small"
-      style={{ ...baseNodeStyle, borderColor: '#14C9C9' }}
+      $borderColor="#14C9C9"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <NodeTitleRow>
           <IconFile style={{ color: '#14C9C9' }} />
           <Text>{data.label}</Text>
-        </div>
+        </NodeTitleRow>
       }
     >
       <Tag color="cyan">输出</Tag>
       <Handle type="target" position={Position.Top} />
-    </Card>
+    </BaseNodeCard>
   )
 })
 
 // 配置节点
 export const ConfigNode = memo(({ data }: NodeProps) => {
   return (
-    <Card
+    <BaseNodeCard
       size="small"
-      style={{ ...baseNodeStyle, borderColor: '#86909C' }}
+      $borderColor="#86909C"
       title={
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <NodeTitleRow>
           <IconSettings style={{ color: '#86909C' }} />
           <Text>{data.label}</Text>
-        </div>
+        </NodeTitleRow>
       }
     >
       <Tag>配置</Tag>
       <Handle type="source" position={Position.Bottom} />
-    </Card>
+    </BaseNodeCard>
   )
 })
 

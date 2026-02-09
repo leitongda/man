@@ -19,6 +19,8 @@ import { IconRobot, IconImport, IconSave } from '@arco-design/web-react/icon'
 import { useParams } from 'react-router-dom'
 import { storyApi } from '@/services/api'
 import { presetApi } from '@/services/preset'
+import { PageHeader, LoadingCenter, SectionBlock } from '@/components/styled/common'
+import { StorylineCard, BeatDescription } from './styles'
 
 const { Title, Paragraph } = Typography
 const FormItem = Form.Item
@@ -99,12 +101,12 @@ export default function OutlinePage() {
   }
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: 60 }}><Spin size={32} /></div>
+    return <LoadingCenter><Spin size={32} /></LoadingCenter>
   }
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={4}>大纲 / 故事线</Title>
         <Space>
           <Button icon={<IconRobot />} onClick={handleGenerate}>AI 生成</Button>
@@ -113,7 +115,7 @@ export default function OutlinePage() {
             保存
           </Button>
         </Space>
-      </div>
+      </PageHeader>
 
       <Card>
         <Form form={form} layout="vertical">
@@ -137,13 +139,13 @@ export default function OutlinePage() {
         {outline?.key_beats?.length > 0 ? (
           <div>
             {outline.key_beats.map((beat: any, index: number) => (
-              <div key={beat.id || index} style={{ marginBottom: 12, padding: 12, background: 'var(--color-fill-1)', borderRadius: 4 }}>
+              <SectionBlock key={beat.id || index}>
                 <Space>
                   <Tag color="arcoblue">#{index + 1}</Tag>
                   <Tag>{beat.type}</Tag>
                 </Space>
-                <Paragraph style={{ margin: '8px 0 0' }}>{beat.description}</Paragraph>
-              </div>
+                <BeatDescription>{beat.description}</BeatDescription>
+              </SectionBlock>
             ))}
           </div>
         ) : (
@@ -151,20 +153,20 @@ export default function OutlinePage() {
         )}
       </Card>
 
-      <Card title="故事线 (Storylines)" style={{ marginTop: 16 }}>
+      <StorylineCard title="故事线 (Storylines)">
         {outline?.storylines?.length > 0 ? (
           <div>
             {outline.storylines.map((line: any, index: number) => (
-              <div key={line.id || index} style={{ marginBottom: 12, padding: 12, background: 'var(--color-fill-1)', borderRadius: 4 }}>
+              <SectionBlock key={line.id || index}>
                 <Title heading={6}>{line.name}</Title>
                 <Paragraph type="secondary">{line.description}</Paragraph>
-              </div>
+              </SectionBlock>
             ))}
           </div>
         ) : (
           <Empty description="暂无故事线" />
         )}
-      </Card>
+      </StorylineCard>
     </div>
   )
 }

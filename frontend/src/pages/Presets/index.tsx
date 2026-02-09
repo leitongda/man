@@ -8,7 +8,6 @@ import {
   Button,
   Typography,
   Space,
-  Table,
   Modal,
   Form,
   Input,
@@ -21,7 +20,9 @@ import {
 import { IconPlus, IconEdit, IconDelete } from '@arco-design/web-react/icon'
 import { useParams, useNavigate } from 'react-router-dom'
 import { usePresetStore } from '@/stores/preset'
-import type { PresetType, PresetCreate } from '@/types/preset'
+import { PageHeader } from '@/components/styled/common'
+import { StyledTable, MonoTextArea } from './styles'
+import type { PresetType } from '@/types/preset'
 import { presetTypeLabels, presetSlugToType, presetTypeToSlug } from '@/types/preset'
 
 const { Title } = Typography
@@ -35,6 +36,7 @@ const presetTabs: { key: PresetType; label: string }[] = [
   { key: 'scene', label: '场景预设' },
   { key: 'storyboard', label: '分镜预设' },
 ]
+
 
 export default function PresetsPage() {
   const { type: typeSlug } = useParams<{ type: string }>()
@@ -173,12 +175,12 @@ export default function PresetsPage() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={4}>预设库</Title>
         <Button type="primary" icon={<IconPlus />} onClick={handleCreate}>
           新建预设
         </Button>
-      </div>
+      </PageHeader>
 
       <Card>
         <Tabs activeTab={currentType} onChange={handleTabChange}>
@@ -187,14 +189,13 @@ export default function PresetsPage() {
           ))}
         </Tabs>
 
-        <Table
+        <StyledTable
           columns={columns}
           data={presets}
           rowKey="id"
           loading={loading}
           pagination={false}
           noDataElement={<Empty description={`暂无${presetTypeLabels[currentType]}预设，点击新建`} />}
-          style={{ marginTop: 16 }}
         />
       </Card>
 
@@ -218,10 +219,9 @@ export default function PresetsPage() {
             <Switch checkedText="公开" uncheckedText="私有" />
           </FormItem>
           <FormItem label="数据 (JSON)" field="data_json" rules={[{ required: true, message: '请输入数据' }]}>
-            <Input.TextArea
+            <MonoTextArea
               placeholder={'{\n  "key": "value"\n}'}
               rows={10}
-              style={{ fontFamily: 'monospace' }}
             />
           </FormItem>
         </Form>

@@ -18,17 +18,19 @@ import {
   Badge,
 } from '@arco-design/web-react'
 import {
-  IconSearch,
   IconRefresh,
   IconEdit,
   IconDelete,
   IconLock,
 } from '@arco-design/web-react/icon'
 import { userApi } from '@/services/auth'
+import { PageHeader } from '@/components/styled/common'
+import { FilterBar } from './Users.styles'
 import type { User, UserUpdateByAdmin } from '@/types/user'
 
 const { Title } = Typography
 const FormItem = Form.Item
+
 
 export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
@@ -204,13 +206,13 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 16 }}>
+      <PageHeader>
         <Title heading={5}>用户管理</Title>
-      </div>
+      </PageHeader>
 
       <Card>
         {/* 搜索和过滤 */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+        <FilterBar>
           <Space>
             <Input.Search
               placeholder="搜索用户名、邮箱或昵称"
@@ -234,7 +236,7 @@ export default function UsersPage() {
           <Button icon={<IconRefresh />} onClick={fetchUsers}>
             刷新
           </Button>
-        </div>
+        </FilterBar>
 
         {/* 用户列表 */}
         <Table
@@ -282,8 +284,8 @@ export default function UsersPage() {
           </FormItem>
           <FormItem label="状态" field="is_active">
             <Select>
-              <Select.Option value={true}>正常</Select.Option>
-              <Select.Option value={false}>禁用</Select.Option>
+              <Select.Option value="true">正常</Select.Option>
+              <Select.Option value="false">禁用</Select.Option>
             </Select>
           </FormItem>
         </Form>

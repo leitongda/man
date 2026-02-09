@@ -13,18 +13,16 @@ import ReactFlow, {
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import {
-  Card,
   Button,
   Drawer,
   Space,
-  Typography,
   List,
   Tag,
 } from '@arco-design/web-react'
 import { IconPlus, IconPlayArrow, IconSave } from '@arco-design/web-react/icon'
 import { nodeTypes, nodeTemplates } from './nodes'
+import { CanvasContainer, ClickableListItem } from './WorkflowCanvas.styles'
 
-const { Title, Text } = Typography
 
 interface WorkflowCanvasProps {
   initialNodes?: Node[]
@@ -136,7 +134,7 @@ export default function WorkflowCanvas({
   }
 
   return (
-    <div style={{ height: '100%', position: 'relative' }}>
+    <CanvasContainer>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -182,9 +180,8 @@ export default function WorkflowCanvas({
         <List
           dataSource={nodeTemplates}
           render={(item) => (
-            <List.Item
+            <ClickableListItem
               key={item.label}
-              style={{ cursor: 'pointer' }}
               onClick={() => handleAddNode(item)}
             >
               <List.Item.Meta
@@ -196,10 +193,10 @@ export default function WorkflowCanvas({
                 }
                 description={item.description}
               />
-            </List.Item>
+            </ClickableListItem>
           )}
         />
       </Drawer>
-    </div>
+    </CanvasContainer>
   )
 }
